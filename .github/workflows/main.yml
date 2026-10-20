@@ -1,15 +1,10 @@
-
 name: MetaCreator Pro - Build Android APK
 
 on:
-  workflow_dispatch:
   push:
-    branches:
-      - main
-      - master
-
-permissions:
-  contents: read
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build-android:
@@ -22,41 +17,28 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          
+          node-version: '18'
 
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
-          distribution: temurin
-          java-version: 21
+          distribution: 'zulu'
+          java-version: '17'
 
       - name: Install project packages
         run: npm install
 
       - name: Build web app
-        run: npm run build
+        run: npm run build --if-present
 
       - name: Install Capacitor
-        run: npm install @capacitor/core @capacitor/cli @capacitor/android
+        run: npm install @capacitor/cli @capacitor/core
 
       - name: Create Capacitor configuration
-        run: |
-          if [ ! -f capacitor.config.json ] && [ ! -f capacitor.config.ts ]; then
-            cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.metacreatorpro.app",
-            "appName": "MetaCreator Pro",
-            "webDir": "dist"
-          }
-          EOF
-          fi
+        run: npx cap init "MetaCreator Pro" "com.metacreator.pro" --web-dir=dist --if-present
 
       - name: Create Android project
-        run: |
-          if [ ! -d android ]; then
-            npx cap add android
-          fi
+        run: npx cap add android --if-present
 
       - name: Sync Android project
         run: npx cap sync android
@@ -64,12 +46,10 @@ jobs:
       - name: Build APK
         run: |
           cd android
-          chmod +x gradlew
           ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: MetaCreatorPro-Debug-APK
+          name: app-debug.apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
