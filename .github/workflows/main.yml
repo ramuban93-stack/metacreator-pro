@@ -9,11 +9,6 @@ on:
 jobs:
   build-android:
     runs-on: ubuntu-latest
-    
-    # यसले सबै कमाण्डहरूलाई सही फोल्डर भित्र चलाउन मद्दत गर्छ
-    defaults:
-      run:
-        working-directory: ./metacreator-pro
 
     steps:
       - name: Get project source
@@ -22,7 +17,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20' # नयाँ भर्सन अपडेट गरिएको
+          node-version: '20'
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -57,4 +52,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: app-debug.apk
-          path: metacreator-pro/android/app/build/outputs/apk/debug/app-debug.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
