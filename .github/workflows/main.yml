@@ -1,10 +1,10 @@
-
 name: MetaCreator Pro - Build Flutter APK
 
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   build-android:
@@ -18,6 +18,9 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: stable
+
+      - name: Create Android platform files
+        run: flutter create . --platforms=android
 
       - name: Check Flutter project
         run: |
